@@ -1,4 +1,5 @@
 import requests
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from requests import RequestException
 
@@ -33,14 +34,24 @@ class Command(BaseCommand):
 
         ports = options.get('ports')
 
+        allowed_hosts = settings.ALLOWED_HOSTS
+        if '*' in allowed_hosts:
+            allowed_host = 'localhost'
+        else:
+            allowed_host = allowed_hosts[0]
+            self.stdout.write(self.style.WARNING('Allowed hosts restricted'))
+            self.stdout.write(f'Using hostname {allowed_host}')
+
         for port in ports:
             self.stdout.write(f'Testing port {port}... ', ending='')
-
             try:
                 response = requests.post(
                     f'http://localhost:{port}/hello/',
                     json={
                         'recipient': 'Monty Python',
+                    },
+                    headers={
+                        'Host': allowed_host,
                     }
                 )
                 response = response.json()
