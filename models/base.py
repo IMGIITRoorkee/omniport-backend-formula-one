@@ -22,20 +22,24 @@ class Model(models.Model):
         """
         Delegate to superclass after checking for a keyword argument
         to run validations on model save method.
-        :param kwargs: accepts an argument to toggle model validations
+        :param args: arguments
+        :param kwargs: keyword arguments, including whether to run validations
         """
-        self._run_validations = kwargs.get('run_validations', False)
-        kwargs.pop('run_validations', False)
-        super().__init__(*args, **kwargs)
+        
+        self._run_validations = kwargs.pop('run_validations', False)
+        
+        return super().__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         """
         Override save method of FacultyMember class to automatically
-        run validators of a model.
-        :param kwargs: accepts an argument to toggle model validations
-        :return:
+        run validations on a model if opted in.
+        :param args: arguments
+        :param kwargs: keyword arguments, including whether to run validations
+        :return: the output of the function from base class
         """
 
-        if self._run_validations or kwargs.get('run_validations', False):
+        if self._run_validations or kwargs.pop('run_validations', False):
             self.full_clean()
+
         return super().save(*args, **kwargs)
