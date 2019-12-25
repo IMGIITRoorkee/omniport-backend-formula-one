@@ -6,13 +6,23 @@ from django.contrib.contenttypes.models import ContentType
 
 class ContentTypeObjectList(generics.GenericAPIView):
     """
+    This view serves the list of all objects inside a particular instance of
+    the ContentType model
     """
 
     permission_classes = [permissions.IsAuthenticated, ]
     queryset = ContentType.objects.all()
 
-    def get(self, request, pk, *args, **kwargs):
+    def get(self, request, pk):
         """
+        Returns the list of all objects in the format:
+        {
+            value *ID of the object*
+            label *string representation of the object*
+        }
+        :param request: request object
+        :param pk: ID of instance
+        :return: list of objects
         """
 
         try:
@@ -22,7 +32,7 @@ class ContentTypeObjectList(generics.GenericAPIView):
                 ContentType.objects.none(),
                 status=status.HTTP_404_NOT_FOUND,
             )
-        
+
         contenttype_objects = (
             contenttype_object_type.model_class().objects.all()
         )
