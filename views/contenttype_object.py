@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, response, status
+from rest_framework import generics, permissions, response, status, renderers
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
@@ -8,8 +8,10 @@ class ContentTypeObjectList(generics.GenericAPIView):
     """
     """
 
+    renderer_classes = [
+        renderers.JSONRenderer,
+    ]
     permission_classes = [permissions.IsAuthenticated, ]
-    queryset = ContentType.objects.all()
 
     def get(self, request, pk, *args, **kwargs):
         """
