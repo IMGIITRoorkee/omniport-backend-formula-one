@@ -8,7 +8,7 @@ from django.contrib.admin.widgets import (
 from base_auth.models import User
 
 Person = swapper.load_model('kernel', 'Person')
-
+Student = swapper.load_model('kernel', 'Student')
 
 class ModelAdmin(admin.ModelAdmin):
     """
@@ -23,6 +23,7 @@ class ModelAdmin(admin.ModelAdmin):
     large_models = [
         Person,
         User,
+        Student,
     ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
