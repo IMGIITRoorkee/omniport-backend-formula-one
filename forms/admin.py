@@ -30,6 +30,13 @@ def return_admin_form(class_name):
 
         entity_content_object = forms.CharField(widget=forms.Select)
 
+        def __init__(self, *args, **kwargs):
+            """
+            Initializes the form object
+            """
+
+            super(Form, self).__init__(*args, **kwargs)
+   
         def save(self, *args, **kwargs):
             """
             Override `save` to pipe value of dropdown list to
