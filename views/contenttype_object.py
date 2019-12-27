@@ -1,37 +1,31 @@
-from rest_framework import generics, permissions, response, status
-from django.core import serializers
+from django.views.generic.base import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from django.contrib.contenttypes.models import ContentType
 
 
-class ContentTypeObjectList(generics.GenericAPIView):
+class ContentTypeObjectList(LoginRequiredMixin, TemplateView):
     """
-    This view serves the list of all objects inside a particular instance of
-    the ContentType model
+    This view shows the list of all objects inside a particular instance of a
+    ContentType model
     """
 
-    permission_classes = [permissions.IsAuthenticated, ]
-    queryset = ContentType.objects.all()
+    template_name = 'formula_one/contenttype_object_list.html'
 
-    def get(self, request, pk):
+    def get_context_data(self, **kwargs):
         """
-        Returns the list of all objects in the format:
-        {
-            value *ID of the object*
-            label *string representation of the object*
-        }
-        :param request: request object
-        :param pk: ID of instance
-        :return: list of objects
+        Return the list of all objects inside the ContentType model class and 
+        the name of the ContentType model
+        :return: context for template
         """
+
+        pk = self.kwargs['pk']
 
         try:
             contenttype_object_type = ContentType.objects.get_for_id(pk)
         except ObjectDoesNotExist:
-            return response.Response(
-                ContentType.objects.none(),
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            raise Http404("ContentType does not exist")
 
         contenttype_objects = (
             contenttype_object_type.model_class().objects.all()
@@ -41,12 +35,14 @@ class ContentTypeObjectList(generics.GenericAPIView):
         for contenttype_object in contenttype_objects:
             contenttype_objects_choices.append(
                 {
-                    "value": contenttype_object.pk,
+                    "id": contenttype_object.pk,
                     "label": str(contenttype_object),
                 },
             )
 
-        return response.Response(
-            contenttype_objects_choices,
-            status=status.HTTP_200_OK,
-        )
+        context = {
+            "contenttype_objects_list": contenttype_objects_choices,
+            "model": contenttype_object_type.model,
+        }
+
+        return context

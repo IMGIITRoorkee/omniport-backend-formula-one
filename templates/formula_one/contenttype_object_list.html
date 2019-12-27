@@ -1,0 +1,32 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/changelists.css' %}" />
+<script src="{% static 'formula_one/js/contenttype-object.js' %}"></script>   
+
+<div id="content" class="flex">
+    <div id="changelist">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <div class="text">
+                            <span>Select {{ model }}</span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for object in contenttype_objects_list %}
+                <tr
+                    class="{% cycle 'row1' 'row2' %}"
+                    onclick="getId('{{ object.id }}')"
+                    style="cursor: pointer;"
+                >
+                    <th>{{ object.label }}</th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
