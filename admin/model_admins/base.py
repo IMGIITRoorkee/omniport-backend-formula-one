@@ -9,6 +9,7 @@ from base_auth.models import User
 
 Person = swapper.load_model('kernel', 'Person')
 Student = swapper.load_model('kernel', 'Student')
+FacultyMember = swapper.load_model('kernel', 'FacultyMember')
 
 class ModelAdmin(admin.ModelAdmin):
     """
@@ -24,6 +25,7 @@ class ModelAdmin(admin.ModelAdmin):
         Person,
         User,
         Student,
+        FacultyMember,
     ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
