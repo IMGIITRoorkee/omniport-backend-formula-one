@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for object in contenttype_objects_list %}
+            {% for object in contenttype_object_list %}
                 <tr
                     class="{% cycle 'row1' 'row2' %}"
                     onclick="getId('{{ object.id }}')"
@@ -29,4 +29,21 @@
             </tbody>
         </table>
     </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if contenttype_object_list.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ contenttype_object_list.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ contenttype_object_list.number }} of {{ contenttype_object_list.paginator.num_pages }}.
+            </span>
+    
+            {% if contenttype_object_list.has_next %}
+                <a href="?page={{ contenttype_object_list.next_page_number }}">next</a>
+                <a href="?page={{ contenttype_object_list.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>    
 </div>
