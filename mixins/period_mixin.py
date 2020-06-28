@@ -1,4 +1,5 @@
 import datetime
+from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.db.models import Q, Model
@@ -132,6 +133,69 @@ class PeriodMixin(Model):
         else:
             raise ValueError('Period has not ended')
 
+    @property
+    def duration(self):
+        """
+        Return the duration of the period
+        :return: the duration of the period
+        """
+
+        difference = None
+        if self.end_date is None:
+            today = datetime.date.today()
+            difference = relativedelta(today, self.start_date)
+        else:
+            difference = relativedelta(self.end_date, self.start_date)
+
+        period_duration = ''
+        years = __class__.get_date_attribute(difference.years, 'year')
+        if years:
+            period_duration += f'{years} '
+
+        months = __class__.get_date_attribute(difference.months, 'month')
+        if months:
+            period_duration += f'{months} '
+
+        days = __class__.get_date_attribute(difference.days, 'day')
+        period_duration += f'{days}'
+
+        period_duration = period_duration.rstrip()
+        return period_duration
+
+    @staticmethod
+    def get_date_attribute(period, singular_suffix, plural_suffix=None):
+        """
+        Return the period with its suffix
+
+        :param period: the duration of the attribute
+        :param singular_suffix: the type of the attribute of date
+        :param plural_suffix: the plural form of the attribute, defaults to
+        None (append 's' to `singular_suffix`)
+        :return: Return the period with its suffix
+        """
+
+        suffix = singular_suffix
+        if period > 0:
+            if __class__.is_plural(period):
+                if plural_suffix is None:
+                    suffix = f'{suffix}s'
+                else:
+                    suffix = plural_suffix
+            return f'{period} {suffix}'
+        return ''
+
+    @staticmethod
+    def is_plural(number):
+        """
+        Check if the number is plural
+
+        :param number: the number which has to be checked
+        :return: whether the number is plural
+        """
+
+        if number > 1:
+            return True
+        return False
 
 class BlurryPeriodMixin(PeriodMixin):
     """
