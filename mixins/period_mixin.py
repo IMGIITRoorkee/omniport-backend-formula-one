@@ -207,6 +207,35 @@ class BlurryPeriodMixin(PeriodMixin):
         default=False,
     )
 
+    @property
+    def duration(self):
+        """
+        Return duration of the period
+        :return duration of the period:
+        """
+
+        if self.is_full_date:
+            return super(BlurryPeriodMixin, self).duration
+
+        difference = None
+        if self.end_date is None:
+            today = datetime.date.today()
+            difference = relativedelta(today, self.start_date)
+        else:
+            difference = relativedelta(self.end_date, self.start_date)
+
+        period_duration = ''
+        years = __class__.get_date_attribute(difference.years, 'year')
+        if years:
+            period_duration += f'{years} '
+
+        months = __class__.get_date_attribute(difference.months, 'month')
+        period_duration += f'{months}'
+
+        period_duration = period_duration.rstrip()
+        return period_duration
+
+
     class Meta:
         """
         Meta class for BlurryPeriodMixin
