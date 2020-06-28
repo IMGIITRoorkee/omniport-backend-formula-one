@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.db.models import Q, Model
+from django.core.exceptions import ValidationError
 
 from formula_one.enums.active_status import ActiveStatus
 
@@ -25,6 +26,17 @@ class PeriodMixin(Model):
         """
 
         abstract = True
+
+    def save(self):
+        """
+        Override save method to check if end_date is after or same as
+        start_date
+        """
+
+        if (self.end_date is not None) and (self.end_date < self.start_date):
+            raise ValidationError('End date cannot be before start date')
+
+        return super(PeriodMixin, self).save()
 
     @classmethod
     def objects_filter(cls, active_status):
