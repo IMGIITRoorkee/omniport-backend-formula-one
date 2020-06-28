@@ -140,12 +140,8 @@ class PeriodMixin(Model):
         :return: the duration of the period
         """
 
-        difference = None
-        if self.end_date is None:
-            today = datetime.date.today()
-            difference = relativedelta(today, self.start_date)
-        else:
-            difference = relativedelta(self.end_date, self.start_date)
+        end_date = self.end_date or datetime.date.today()
+        difference = relativedelta(end_date, self.start_date)
 
         period_duration = {
             'years': difference.years,
