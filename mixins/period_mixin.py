@@ -167,7 +167,7 @@ class BlurryPeriodMixin(PeriodMixin):
         :return: duration of the period after omitting days
         """
 
-        period_duration = super(__class__, self).duration
+        period_duration = super().duration
         if not self.is_full_date:
             del period_duration['days']
         return period_duration
