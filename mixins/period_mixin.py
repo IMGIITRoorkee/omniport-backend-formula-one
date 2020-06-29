@@ -36,7 +36,7 @@ class PeriodMixin(Model):
         if (self.end_date is not None) and (self.end_date < self.start_date):
             raise ValidationError('End date cannot be before start date')
 
-        return super(PeriodMixin, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     @classmethod
     def objects_filter(cls, active_status):
