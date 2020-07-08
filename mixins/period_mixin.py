@@ -1,4 +1,5 @@
 import datetime
+from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.db.models import Q, Model
@@ -132,6 +133,22 @@ class PeriodMixin(Model):
         else:
             raise ValueError('Period has not ended')
 
+    @property
+    def duration(self):
+        """
+        Return the duration of the period
+        :return: the duration of the period
+        """
+
+        end_date = self.end_date or datetime.date.today()
+        difference = relativedelta(end_date, self.start_date)
+
+        period_duration = {
+            'years': difference.years,
+            'months': difference.months,
+            'days': difference.days,
+        }
+        return period_duration
 
 class BlurryPeriodMixin(PeriodMixin):
     """
@@ -142,6 +159,18 @@ class BlurryPeriodMixin(PeriodMixin):
     is_full_date = models.BooleanField(
         default=False,
     )
+
+    @property
+    def duration(self):
+        """
+        Return duration of the period after omitting days
+        :return: duration of the period after omitting days
+        """
+
+        period_duration = super().duration
+        if not self.is_full_date:
+            del period_duration['days']
+        return period_duration
 
     class Meta:
         """
