@@ -27,15 +27,23 @@ class PeriodMixin(Model):
 
         abstract = True
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         """
-        Override save method to check if end_date is after or same as
-        start_date
+        Raise ValidationError if end_date is before start_date
         """
 
         if (self.end_date is not None) and (self.end_date < self.start_date):
-            raise ValidationError('End date cannot be before start date')
+            raise ValidationError({
+                'Invalid period': 'End date cannot be before start date.'
+            })
 
+    def save(self, *args, **kwargs):
+        """
+        Override save method to check the custom validations written in clean
+        method
+        """
+
+        self.full_clean()
         return super().save(*args, **kwargs)
 
     @classmethod
