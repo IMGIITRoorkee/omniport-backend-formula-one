@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.db.models import Q, Model
+from django.core.exceptions import ValidationError
 
 from formula_one.enums.active_status import ActiveStatus
 
@@ -26,6 +27,28 @@ class PeriodMixin(Model):
         """
 
         abstract = True
+
+    def clean(self):
+        """
+        Hook for checking if the end date of a period is after or same as
+        start date
+        :raise: ValidationError, if end date is before start date
+        """
+
+        if (self.end_date is not None) and (self.end_date < self.start_date):
+            raise ValidationError({
+                'Invalid period': 'End date cannot be before start date.'
+            })
+
+    def save(self, *args, **kwargs):
+        """
+        Override save method to check the custom validations written in clean
+        method
+        """
+
+        # Intrinsically calls the `clean` method
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     @classmethod
     def objects_filter(cls, active_status):
