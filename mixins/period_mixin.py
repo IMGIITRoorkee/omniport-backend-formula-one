@@ -29,7 +29,9 @@ class PeriodMixin(Model):
 
     def clean(self):
         """
-        Raise ValidationError if end_date is before start_date
+        Hook for checking if the end date of a period is after or same as
+        start date
+        :raise: ValidationError, if end date is before start date
         """
 
         if (self.end_date is not None) and (self.end_date < self.start_date):
@@ -43,6 +45,7 @@ class PeriodMixin(Model):
         method
         """
 
+        # Intrinsically calls the `clean` method
         self.full_clean()
         return super().save(*args, **kwargs)
 
