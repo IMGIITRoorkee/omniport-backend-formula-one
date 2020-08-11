@@ -37,7 +37,7 @@ class PeriodMixin(Model):
 
         if (self.end_date is not None) and (self.end_date < self.start_date):
             raise ValidationError({
-                'Invalid period': 'End date cannot be before start date.'
+                'end_date': 'End date cannot be before start date.'
             })
 
     def save(self, *args, **kwargs):
