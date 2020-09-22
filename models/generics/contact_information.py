@@ -12,19 +12,16 @@ class ContactInformation(Model):
 
     primary_phone_number = models.CharField(
         max_length=15,
-        unique=True,
         blank=True,
         null=True,
     )
     secondary_phone_number = models.CharField(
         max_length=15,
-        unique=True,
         blank=True,
         null=True,
     )
 
     email_address = models.EmailField(
-        unique=True,
         blank=True,
         null=True,
     )
@@ -33,7 +30,6 @@ class ContactInformation(Model):
     )
 
     institute_webmail_address = models.EmailField(
-        unique=True,
         blank=True,
         null=True,
     )
@@ -63,6 +59,36 @@ class ContactInformation(Model):
         """
 
         verbose_name_plural = 'contact information'
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    'entity_content_type',
+                    'primary_phone_number',
+                ],
+                name='unique_primary_number',
+            ),
+            models.UniqueConstraint(
+                fields=[
+                    'entity_content_type',
+                    'secondary_phone_number',
+                ],
+                name='unique_secondary_number',
+            ),
+            models.UniqueConstraint(
+                fields=[
+                    'entity_content_type',
+                    'email_address',
+                ],
+                name='unique_email_address',
+            ),
+            models.UniqueConstraint(
+                fields=[
+                    'entity_content_type',
+                    'institute_webmail_address',
+                ],
+                name='unique_institute_webmail_address',
+            ),
+        ]
 
     def get_one_true_email_address(self, check_verified=True):
         """
