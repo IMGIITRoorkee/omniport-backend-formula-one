@@ -6,6 +6,7 @@ FACEBOOK = 'fac'
 FLICKR = 'fli'
 GITHUB = 'git'
 GOOGLE = 'goo'
+INSTAGRAM = 'ins'
 LINKEDIN = 'lin'
 MEDIUM = 'med'
 PINTEREST = 'pin'
@@ -25,6 +26,7 @@ SOCIAL_SITES = (
     (FLICKR, 'Flickr'),
     (GITHUB, 'GitHub'),
     (GOOGLE, 'Google'),
+    (INSTAGRAM, 'Instagram'),
     (LINKEDIN, 'LinkedIn'),
     (MEDIUM, 'Medium'),
     (PINTEREST, 'Pinterest'),
@@ -45,6 +47,7 @@ SOCIAL_SITE_ICONS = {
     FLICKR: 'flickr',
     GITHUB: 'github',
     GOOGLE: 'google',
+    INSTAGRAM: 'instagram',
     LINKEDIN: 'linkedin',
     MEDIUM: 'medium',
     PINTEREST: 'pinterest',
