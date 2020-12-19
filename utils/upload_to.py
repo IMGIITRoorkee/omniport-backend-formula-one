@@ -1,6 +1,7 @@
 import mimetypes
 import os
 import uuid
+
 from django.conf import settings
 from django.utils.deconstruct import deconstructible
 
@@ -33,6 +34,7 @@ class UploadTo:
         :param filename: the original name of the file, used for the extension
         :return: the path to the uploaded image
         """
+
         # Path upto the file
         if self.file_manager:
             if type(instance).__name__ == "File":
@@ -72,11 +74,13 @@ class UploadTo:
         return destination
 
     def get_file_name(self, path, filename):
-        """Return Updated file name in case of file already exists 
+        """
+        Return Updated file name in case of file already exists 
         :param path: path of folder in which the file will be stored 
         :param filename: the original name of the file
         :return: the path to the uploaded image
         """
+        
         name, ext = os.path.splitext(filename)
         newpath = path+'/'+filename
         newname = filename
