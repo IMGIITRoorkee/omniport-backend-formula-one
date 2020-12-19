@@ -1,7 +1,6 @@
 import mimetypes
 import os
 import uuid
-
 from django.conf import settings
 from django.utils.deconstruct import deconstructible
 
@@ -13,7 +12,7 @@ class UploadTo:
     storing files based on a UUID naming scheme
     """
 
-    def __init__(self, app_name, folder_name, file_manager=False):
+    def __init__(self, app_name, folder_name, file_manager=False, base_location=''):
         """
         Initialise a callable instance of the class with the given parameters
         :param app_name: the name of the app using this utility
@@ -24,6 +23,7 @@ class UploadTo:
         self.app_name = app_name
         self.folder_name = folder_name
         self.file_manager = file_manager
+        self.base_location = base_location
 
     def __call__(self, instance, filename):
         """
@@ -33,39 +33,56 @@ class UploadTo:
         :param filename: the original name of the file, used for the extension
         :return: the path to the uploaded image
         """
-
         # Path upto the file
         if self.file_manager:
-            folder_name = str(instance.folder.folder_name())
+            if type(instance).__name__ == "File":
+                folder_name = str(instance.folder.path)
+                self.app_name = str(
+                    instance.folder.filemanager.filemanager_name)
+            else:
+                folder_name = self.folder_name
+            if type(instance).__name__ == "FileManager":
+
+                if instance.is_public:
+                    self.base_location = 'public'
+                else:
+                    self.base_location = 'protected'
+
+            elif type(instance).__name__ == 'File':
+                if instance.folder.filemanager.is_public:
+                    self.base_location = 'public'
+                else:
+                    self.base_location = 'protected'
+
         else:
             folder_name = self.folder_name
 
-        # Name of the file
-        uuid_key = uuid.uuid4()
-
-        # Extension of the file
-        extension = filename.split('.')[-1]
-        extension = extension.lower()
-        extension = f'.{extension}'
-        if extension not in mimetypes.types_map.keys():
-            extension = ''
-
-        # Full path to the file
-        destination = os.path.join(
+        path = os.path.join(
             self.app_name,
             folder_name,
-            f'{uuid_key}{extension}',
         )
-
-        # Delete any existing file at the destination location
-        # This is highly unlikely because of the use of UUIDs
-        try:
-            path = os.path.join(
-                settings.MEDIA_ROOT,
-                destination,
-            )
-            os.remove(path)
-        except FileNotFoundError:
-            pass
-
+        updated_filename = self.get_file_name(path, filename)
+        # Full path to the file
+        destination = os.path.join(
+            self.base_location,
+            self.app_name,
+            folder_name,
+            updated_filename,
+        )
         return destination
+
+    def get_file_name(self, path, filename):
+        """Return Updated file name in case of file already exists 
+        :param path: path of folder in which the file will be stored 
+        :param filename: the original name of the file
+        :return: the path to the uploaded image
+        """
+        name, ext = os.path.splitext(filename)
+        newpath = path+'/'+filename
+        newname = filename
+        counter = 0
+        while os.path.exists(newpath):
+            newname = name+'_' + str(counter) + ext
+            newpath = path+'/'+newname
+            counter = counter + 1
+        return newname
