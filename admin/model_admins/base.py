@@ -42,7 +42,7 @@ class ModelAdmin(admin.ModelAdmin):
 
         if db_field.related_model in self.large_models:
             kwargs['widget'] = AutocompleteSelect(
-                db_field.remote_field,
+                db_field,
                 self.admin_site,
                 using=db,
             )
@@ -63,7 +63,7 @@ class ModelAdmin(admin.ModelAdmin):
 
         if db_field.related_model in self.large_models:
             kwargs['widget'] = AutocompleteSelectMultiple(
-                db_field.remote_field,
+                db_field,
                 self.admin_site,
                 using=db,
             )
