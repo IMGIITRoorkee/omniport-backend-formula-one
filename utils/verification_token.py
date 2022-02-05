@@ -92,6 +92,7 @@ def send_token(
     )
     target_app_name = kwargs.get('target_app_name', None)
     target_app_url = kwargs.get('target_app_url', None)
+    attachment_paths = kwargs.get('attachment_paths', None)
 
     while True:
         recovery_token = get_random_string(length=20)
@@ -107,6 +108,7 @@ def send_token(
         body_text=email_body,
         subject_text=email_subject,
         category=category,
+        attachment_paths=attachment_paths,
         has_custom_user_target=True,
         persons=[Person.objects.get(user__id=user_id).id],
         use_primary_email=use_primary_email,
