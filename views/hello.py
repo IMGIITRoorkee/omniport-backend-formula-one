@@ -1,10 +1,13 @@
 from rest_framework import response, views
+from rest_framework.permissions import AllowAny
 
 
 class Hello(views.APIView):
     """
     This view shows a placeholder message "Hello X!"
     """
+
+    permission_classes = [AllowAny]
 
     @staticmethod
     def hello(recipient):

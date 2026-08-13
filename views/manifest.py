@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from rest_framework import status, generics, renderers, response
+from rest_framework.permissions import AllowAny
 
 
 class Manifest(generics.GenericAPIView):
@@ -9,6 +10,7 @@ class Manifest(generics.GenericAPIView):
     This view returns the dynamically generated manifest for the Omniport PWA
     """
 
+    permission_classes = [AllowAny]
     renderer_classes = [
         renderers.JSONRenderer,
     ]
