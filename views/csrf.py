@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import response, views
+from rest_framework.permissions import AllowAny
 
 
 @method_decorator([ensure_csrf_cookie], name='get')
@@ -8,6 +9,8 @@ class EnsureCsrf(views.APIView):
     """
     This view forcefully sets or resets the CSRF cookie on the browser
     """
+
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         """
